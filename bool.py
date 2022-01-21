@@ -6,7 +6,7 @@
 P or (Q and R or P)
 """
 from pcomb import *
-from se import *
+import se 
 
 class ParseBExpr(Parser):
     def __init__(self):
@@ -18,7 +18,15 @@ class ParseDisj(Parser):
 
 class ParseConj(Parser):
     def __init__(self):
-        self.parser = ParseBVar() ^ ParseBParen()
+        self.parser = ParseFrmt() ^ ParseBParen()
+
+class ParseFrmt(Parser):
+    def __init__(self):
+        print("lol")
+        self.parser = se.ParseExtrExpr() >> (lambda l:
+                        (ParseSymbol("=") ^ ParseSymbol("<")) >> (lambda cmp:
+                                                                  se.ParseExtrExpr() >> (lambda r:
+                        Return(Less(l, r)) if cmp == "<" else Return(Equal(l, r)))))
 
 class ParseBVar(Parser):
     def __init__(self):

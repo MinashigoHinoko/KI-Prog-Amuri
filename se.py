@@ -4,6 +4,7 @@
 """
 
 from pcomb import *
+import bool
 
 """
 <expr> ::= <term> + <expr> | <term>
@@ -15,7 +16,11 @@ from pcomb import *
 
 class ParseExpr(Parser):
     def __init__(self):
-        self.parser = ParsePlus() ^ ParseTerm()
+        self.parser = ParseExtrExpr() ^ bool.ParseBExpr()
+        
+class ParseExtrExpr(Parser):
+    def __init__(self):
+        self.parser=ParsePlus() ^ ParseTerm()
 
 class ParseTerm(Parser):
     def __init__(self):
