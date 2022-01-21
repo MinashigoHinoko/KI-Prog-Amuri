@@ -58,7 +58,7 @@ True
 class Expr:
     
     def printExpr(inp):
-        prnt = bool.ParseExpr().parse(inp)
+        prnt = se.ParseExpr().parse(inp)
         print(pcomb.result(prnt))
         pass
     
