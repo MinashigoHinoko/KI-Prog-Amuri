@@ -25,7 +25,7 @@ class ParseEqlLess(Parser):
         self.parser = se.ParseExtrExpr() >> (lambda l:
                         (ParseSymbol("=") ^ ParseSymbol("<")) >> (lambda eqlless:
                                                                   se.ParseExtrExpr() >> (lambda r:
-                        Return(Less(l, r)) if eqlless == "<" else Return(Equal(l, r)))))#
+                        Return(Lesser(l, r)) if eqlless == "<" else Return(Equals(l, r)))))#
             
 class ParseBParen(Parser):
     def __init__(self):

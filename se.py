@@ -16,7 +16,7 @@ import bool
 
 class ParseExpr(Parser):
     def __init__(self):
-        self.parser = ParseExtrExpr() ^ bool.ParseBExpr()
+        self.parser = bool.ParseBExpr() ^ ParseExtrExpr()
         
 class ParseExtrExpr(Parser):
     def __init__(self):
@@ -51,7 +51,7 @@ class ParseVar(Parser):
 class ParseParen(Parser):
     def __init__(self):
         self.parser = ParseSymbol('(') >> (lambda _:
-                      ParseExpr()      >> (lambda e:
+                      ParseExtrExpr()      >> (lambda e:
                       ParseSymbol(')') >> (lambda _:
                       Return(e))))
 
