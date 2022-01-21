@@ -18,21 +18,15 @@ class ParseDisj(Parser):
 
 class ParseConj(Parser):
     def __init__(self):
-        self.parser = ParseFrmt() ^ ParseBParen()
+        self.parser = ParseEqlLess() ^ ParseBParen()
 
-class ParseFrmt(Parser):
+class ParseEqlLess(Parser):
     def __init__(self):
-        print("lol")
         self.parser = se.ParseExtrExpr() >> (lambda l:
-                        (ParseSymbol("=") ^ ParseSymbol("<")) >> (lambda cmp:
+                        (ParseSymbol("=") ^ ParseSymbol("<")) >> (lambda eqlless:
                                                                   se.ParseExtrExpr() >> (lambda r:
-                        Return(Less(l, r)) if cmp == "<" else Return(Equal(l, r)))))
-
-class ParseBVar(Parser):
-    def __init__(self):
-        self.parser = ParseIdentifier() >> (lambda name:
-                      Return(BVar(name)))
-
+                        Return(Less(l, r)) if eqlless == "<" else Return(Equal(l, r)))))#
+            
 class ParseBParen(Parser):
     def __init__(self):
         self.parser = ParseSymbol("(") >> (lambda _:
@@ -85,4 +79,12 @@ class Or(Op2):
 class And(Op2):
     op = "and"
     fun = lambda _, x, y: x and y
+    
+class Lesser(Op2):
+    op = "<"
+    fun = lambda _, x, y: x < y
+    
+class Equals(Op2):
+    op = "="
+    fun = lambda _, x, y: x == y    
     
