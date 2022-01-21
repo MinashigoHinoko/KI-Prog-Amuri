@@ -245,3 +245,12 @@ def diff(string, var):
        expr = result(res)
        return str(expr.diff(var).simplify())
    
+    
+if __name__ == "__main__":
+     x = Var('x')
+     y = Con(5)
+     print(Times(x, Exp(Times(Con(3), Con(3)))).simplify())
+     print(Times(Con(5), Plus(Con(3), Con(4))).simplify())
+     print(Exp(Var("x") * (Var("y") + Con(5))).diff("x").simplify())
+     print(Var("x") + Con(5) == Var("x") + Con(5))
+
