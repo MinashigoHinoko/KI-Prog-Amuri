@@ -27,14 +27,31 @@ def evalExpr(inp, env):
 """
 
 class Main():
+    """
+    >>> Main()
+    >>> x + y +z = 10 (Insert problem: )
+    >>> x < y         (Now Insert rule/s(type 'end' to stop): )       
+    >>> x < 3         (Now Insert rule/s(type 'end' to stop): )
+    >>> 0 < x         (Now Insert rule/s(type 'end' to stop): )
+    >>> end           (Now Insert rule/s(type 'end' to stop): )
+    A Possible Solution is: {z = 7, y = 2, x = 1}
+    """
 
-    def tester(expr,sol):
-        test_set = {}
-        for x in sol:
-            sol_calc, sol_reslt = x.split('=', 1)
-            test_set.update({sol_calc[:-1]: int(sol_reslt[1:])})
-        for y in expr:
-            Expr.evalExpr(y, test_set)
+    def __init__(self):
+        b=0
+        expr = [input("Insert problem: ")]
+        while b < 1:
+            rule= input("Now Insert rule/s(type 'end' to stop): ")
+            if rule == 'end':
+                b = 1
+            else:
+                expr.append(rule)
+        sol= str(Z3Solver.solve(expr))
+        sol= sol.replace("[","{")
+        sol= sol.replace("]","}")
+        print("\n")
+        print(f"A Possible Solution is: {sol}")
+        print("\n")
         
 
 class Expr:
@@ -75,7 +92,6 @@ class Expr:
         True
         """
         evl = se.ParseExpr().parse(inp)
-        z = type(evl[0][0].toz3())
         print(pcomb.result(evl).ev(env))
 
 class Z3Solver:
@@ -83,5 +99,9 @@ class Z3Solver:
         s = z3.Solver()
         for e in expr:
             s.add(pcomb.result(se.ParseExpr().parse(e)).toz3())
-        print(s.check().r)
-        print(s.model())
+        checker = str(s.check())
+        if checker == "sat":
+            return s.model()
+        elif checker == "unsat":
+            print("No Solution!")
+
