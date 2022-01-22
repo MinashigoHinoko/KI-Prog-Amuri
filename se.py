@@ -59,7 +59,7 @@ class ParsePlus(Parser):
     def __init__(self):
         self.parser = ParseTerm()      >> (lambda t:
                       ParseSymbol('+') >> (lambda _:
-                      ParseExpr()      >> (lambda e:
+                      ParseExtrExpr()      >> (lambda e:
                       Return(Plus(t, e)))))
 
 class ParseTimes(Parser):
@@ -249,13 +249,4 @@ def diff(string, var):
     if res != []:
        expr = result(res)
        return str(expr.diff(var).simplify())
-   
-    
-if __name__ == "__main__":
-     x = Var('x')
-     y = Con(5)
-     print(Times(x, Exp(Times(Con(3), Con(3)))).simplify())
-     print(Times(Con(5), Plus(Con(3), Con(4))).simplify())
-     print(Exp(Var("x") * (Var("y") + Con(5))).diff("x").simplify())
-     print(Var("x") + Con(5) == Var("x") + Con(5))
 

@@ -21,16 +21,24 @@ class ParseDisj(Parser):
 
 class ParseConj(Parser):
     def __init__(self):
-        self.parser = ParseEqlLess() ^ ParseBParen()
-
+        self.parser = ParseEqlLess() ^ ParseLesser()
 
 class ParseEqlLess(Parser):
     def __init__(self):
-        self.parser = se.ParseExtrExpr() >> (lambda d:
-                                             (ParseSymbol("=") ^ ParseSymbol("<")) >> (lambda symbl:
-                                                                                       se.ParseExtrExpr() >> (lambda e:
-                                                                                                              Return(Lesser(d, e)) if symbl == "<" else Return(Equals(d, e)))))
+        self.parser = ParseEqual() ^ ParseBParen()
 
+class ParseEqual(Parser):
+    def __init__(self):
+        self.parser = se.ParseExtrExpr() >> (lambda d:
+                                             (ParseSymbol("=") >> (lambda _:
+                                                                                       se.ParseExtrExpr() >> (lambda e:
+                                                                                                              Return(Equals(d, e))))))
+class ParseLesser(Parser):
+    def __init__(self):
+        self.parser = se.ParseExtrExpr() >> (lambda d:
+                                             (ParseSymbol("<") >> (lambda _:
+                                                                                       se.ParseExtrExpr() >> (lambda e:
+                                                                                                              Return(Lesser(d, e))))))
 
 class ParseBParen(Parser):
     def __init__(self):
