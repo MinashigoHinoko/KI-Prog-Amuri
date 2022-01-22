@@ -26,10 +26,10 @@ class ParseConj(Parser):
 
 class ParseEqlLess(Parser):
     def __init__(self):
-        self.parser = se.ParseExtrExpr() >> (lambda l:
-                                             (ParseSymbol("=") ^ ParseSymbol("<")) >> (lambda eqlless:
-                                                                                       se.ParseExtrExpr() >> (lambda r:
-                                                                                                              Return(Lesser(l, r)) if eqlless == "<" else Return(Equals(l, r)))))
+        self.parser = se.ParseExtrExpr() >> (lambda d:
+                                             (ParseSymbol("=") ^ ParseSymbol("<")) >> (lambda symbl:
+                                                                                       se.ParseExtrExpr() >> (lambda e:
+                                                                                                              Return(Lesser(d, e)) if symbl == "<" else Return(Equals(d, e)))))
 
 
 class ParseBParen(Parser):
