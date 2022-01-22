@@ -2,7 +2,7 @@
 """
 Created on Fri Jan 21 15:56:10 2022
 
-@author: mHiko(Amir)
+@author: mHiko|Amir
 """
 
 import bool
@@ -25,8 +25,20 @@ def printExpr(inp):
 def evalExpr(inp, env):
 
 """
+
+class Main():
+
+    def tester(expr,sol):
+        test_set = {}
+        for x in sol:
+            sol_calc, sol_reslt = x.split('=', 1)
+            test_set.update({sol_calc[:-1]: int(sol_reslt[1:])})
+        for y in expr:
+            Expr.evalExpr(y, test_set)
+        
+
 class Expr:
-    
+
     def printExpr(inp):
         """
         The following are examples of uses of these functions:
@@ -43,11 +55,10 @@ class Expr:
         """
         prnt = se.ParseExpr().parse(inp)
         print(pcomb.result(prnt))
-        
-    
+
     def evalExpr(inp, env):
         """
-        >>> env = {’x’:1, ’y’:2, ’z’:3}
+        >>> env = {'x':1, 'y':2, 'z':3}
         >>> Expr.evalExpr("x = y", env)
         False
         >>> Expr.evalExpr("x + 2 * y", env)
@@ -64,7 +75,13 @@ class Expr:
         True
         """
         evl = se.ParseExpr().parse(inp)
-        z = type(evl[0][0].toZ3())
+        z = type(evl[0][0].toz3())
         print(pcomb.result(evl).ev(env))
-        pass
 
+class Z3Solver:
+    def solve(expr):
+        s = z3.Solver()
+        for e in expr:
+            s.add(pcomb.result(se.ParseExpr().parse(e)).toz3())
+        print(s.check().r)
+        print(s.model())

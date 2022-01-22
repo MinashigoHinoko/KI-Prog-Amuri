@@ -1,10 +1,17 @@
 """
+@author: Cezar Ionescu
+@Editor: mHiko|Amir
+"""
+
+"""
 >>> ParseExpr().parse("exp(x) + 2*y")
 [(Plus(Exp(Var('x')), Times(Con(2), Var('y'))), '')]
 """
 
+import math
 from pcomb import *
 import bool
+import z3
 
 """
 <expr> ::= <term> + <expr> | <term>
@@ -14,67 +21,80 @@ import bool
 <atom> ::= <con> | <var> | ( <expr> )
 """
 
+
 class ParseExpr(Parser):
     def __init__(self):
         self.parser = bool.ParseBExpr() ^ ParseExtrExpr()
-        
+
+
 class ParseExtrExpr(Parser):
     def __init__(self):
-        self.parser=ParsePlus() ^ ParseTerm()
+        self.parser = ParsePlus() ^ ParseTerm()
+
 
 class ParseTerm(Parser):
     def __init__(self):
         self.parser = ParseTimes() ^ ParseFactor()
 
+
 class ParseFactor(Parser):
     def __init__(self):
         self.parser = ParseExpon()
 
+
 class ParseExpon(Parser):
     def __init__(self):
         self.parser = ParseExp() ^ ParseAtom()
-        
+
+
 class ParseAtom(Parser):
     def __init__(self):
         self.parser = ParseCon() ^ ParseVar() ^ ParseParen()
 
+
 class ParseCon(Parser):
     def __init__(self):
         self.parser = ParseInt() >> (lambda n:
-                      Return(Con(n)))
+                                     Return(Con(n)))
+
 
 class ParseVar(Parser):
     def __init__(self):
         self.parser = ParseIdent() >> (lambda name:
-                      Return(Var(name)))
+                                       Return(Var(name)))
+
 
 class ParseParen(Parser):
     def __init__(self):
         self.parser = ParseSymbol('(') >> (lambda _:
-                      ParseExtrExpr()      >> (lambda e:
-                      ParseSymbol(')') >> (lambda _:
-                      Return(e))))
+                                           ParseExtrExpr() >> (lambda e:
+                                                               ParseSymbol(')') >> (lambda _:
+                                                                                    Return(e))))
+
 
 class ParsePlus(Parser):
     def __init__(self):
-        self.parser = ParseTerm()      >> (lambda t:
-                      ParseSymbol('+') >> (lambda _:
-                      ParseExtrExpr()      >> (lambda e:
-                      Return(Plus(t, e)))))
+        self.parser = ParseTerm() >> (lambda t:
+                                      ParseSymbol('+') >> (lambda _:
+                                                           ParseExtrExpr() >> (lambda e:
+                                                                               Return(Plus(t, e)))))
+
 
 class ParseTimes(Parser):
     def __init__(self):
-        self.parser = ParseFactor()    >> (lambda x:
-                      ParseSymbol('*') >> (lambda _:
-                      ParseTerm()      >> (lambda y:
-                      Return(Times(x, y)))))
+        self.parser = ParseFactor() >> (lambda x:
+                                        ParseSymbol('*') >> (lambda _:
+                                                             ParseTerm() >> (lambda y:
+                                                                             Return(Times(x, y)))))
+
 
 class ParseExp(Parser):
     def __init__(self):
         self.parser = ParseSymbol("exp") >> (lambda _:
-                      ParseAtom()        >> (lambda a:
-                      Return(Exp(a))))
-        
+                                             ParseAtom() >> (lambda a:
+                                                             Return(Exp(a))))
+
+
 class Expr:
     def __add__(self, other):
         return Plus(self, other)
@@ -85,12 +105,13 @@ class Expr:
     def diff(self, var):
         return "Error! diff not implemented"
 
+
 class Con(Expr):
     def __init__(self, val):
         self.val = val
-        
+
     def __str__(self):
-        return str(self.val) # f"Con({self.val})"
+        return str(self.val)  # f"Con({self.val})"
 
     def ev(self, env):
         return self.val
@@ -105,16 +126,20 @@ class Con(Expr):
         if type(other).__name__ != "Con":
             return False
         return self.val == other.val
-    
+
     def vars_(self):
         return []
-    
+
+    def toz3(self):
+        return self.val
+
+
 class Var(Expr):
     def __init__(self, name):
         self.name = name
 
     def __str__(self):
-        return self.name # f"Var({self.name})"
+        return self.name  # f"Var({self.name})"
 
     def ev(self, env):
         return env[self.name]
@@ -135,14 +160,19 @@ class Var(Expr):
 
     def vars_(self):
         return [self.name]
-    
+
+    def toz3(self):
+        return z3.Int(self.name)
+
+
 class BinOp(Expr):
     def __init__(self, left, right):
-        self.left  = left
+        self.left = left
         self.right = right
 
     def __str__(self):
-        return f"({self.left} {self.op} {self.right})" # f"{self.name}({self.left}, {self.right})" # +
+        # f"{self.name}({self.left}, {self.right})" # +
+        return f"({self.left} {self.op} {self.right})"
 
     def ev(self, env):
         return self.fun(self.left.ev(env), self.right.ev(env))
@@ -154,21 +184,21 @@ class BinOp(Expr):
 
     def vars_(self):
         return list(set(self.left.vars_() + self.right.vars_()))
-    
-    
+
+
 class Plus(BinOp):
     name = "Plus"
-    fun  = lambda _, x, y: x + y
-    op   = '+'
+    def fun(_, x, y): return x + y
+    op = '+'
 
     def diff(self, var):
         return self.left.diff(var) + self.right.diff(var)
 
     def simplify(self):
-        simple_left  = self.left.simplify()
+        simple_left = self.left.simplify()
         simple_right = self.right.simplify()
 
-        vl  = None
+        vl = None
         vr = None
         if simple_left.vars_() == []:
             vl = simple_left.ev({})
@@ -183,19 +213,23 @@ class Plus(BinOp):
             return simple_left
         else:
             return simple_left + simple_right
-        
+
+    def toz3(self):
+        return self.left.toz3() + self.right.toz3()
+
+
 class Times(BinOp):
     name = "Times"
-    fun  = lambda _, x, y: x * y
-    op   = '*'
+    def fun(_, x, y): return x * y
+    op = '*'
 
     def diff(self, var):
         return self.left.diff(var) * self.right + self.left * self.right.diff(var)
 
     def simplify(self):
-        simple_left  = self.left.simplify()
+        simple_left = self.left.simplify()
         simple_right = self.right.simplify()
-        vl  = None
+        vl = None
         vr = None
         if simple_left.vars_() == []:
             vl = simple_left.ev({})
@@ -212,15 +246,17 @@ class Times(BinOp):
             return simple_left
         else:
             return simple_left * simple_right
-    
-import math
+
+    def toz3(self):
+        return self.left.toz3() * self.right.toz3()
+
 
 class Exp(Expr):
     def __init__(self, arg):
         self.arg = arg
 
     def __str__(self):
-        return f"exp({self.arg})" # f"Exp({self.arg})"
+        return f"exp({self.arg})"  # f"Exp({self.arg})"
 
     def ev(self, env):
         return math.exp(self.arg.ev(env))
@@ -238,15 +274,15 @@ class Exp(Expr):
 
         if simple_arg.vars_() == []:
             return Con(math.exp(simple_arg.ev({})))
-        
+
         return Exp(simple_arg)
 
     def vars_(self):
         return self.arg.vars_()
 
+
 def diff(string, var):
     res = ParseExpr().parse(string)
     if res != []:
-       expr = result(res)
-       return str(expr.diff(var).simplify())
-
+        expr = result(res)
+        return str(expr.diff(var).simplify())

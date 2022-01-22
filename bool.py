@@ -1,4 +1,8 @@
 """
+@author: Cezar Ionescu
+@Editor: mHiko|Amir
+"""
+"""
 <bool> ::= <disj> or <bool> | <disj>
 <disj> ::= <conj> and <disj> | <conj>
 <conj> ::= <var> | ( <bool> )
@@ -7,6 +11,7 @@ P or (Q and R or P)
 """
 from pcomb import *
 import se
+import z3
 
 
 class ParseBExpr(Parser):
@@ -23,22 +28,27 @@ class ParseConj(Parser):
     def __init__(self):
         self.parser = ParseEqlLess() ^ ParseLesser()
 
+
 class ParseEqlLess(Parser):
     def __init__(self):
         self.parser = ParseEqual() ^ ParseBParen()
+
 
 class ParseEqual(Parser):
     def __init__(self):
         self.parser = se.ParseExtrExpr() >> (lambda d:
                                              (ParseSymbol("=") >> (lambda _:
-                                                                                       se.ParseExtrExpr() >> (lambda e:
-                                                                                                              Return(Equals(d, e))))))
+                                                                   se.ParseExtrExpr() >> (lambda e:
+                                                                                          Return(Equals(d, e))))))
+
+
 class ParseLesser(Parser):
     def __init__(self):
         self.parser = se.ParseExtrExpr() >> (lambda d:
                                              (ParseSymbol("<") >> (lambda _:
-                                                                                       se.ParseExtrExpr() >> (lambda e:
-                                                                                                              Return(Lesser(d, e))))))
+                                                                   se.ParseExtrExpr() >> (lambda e:
+                                                                                          Return(Lesser(d, e))))))
+
 
 class ParseBParen(Parser):
     def __init__(self):
@@ -95,17 +105,29 @@ class Or(Op2):
     op = "or"
     def fun(_, x, y): return x or y
 
+    def toz3(self):
+        return z3.Or(self.left.toz3(), self.right.toz3())
+
 
 class And(Op2):
     op = "and"
     def fun(_, x, y): return x and y
+
+    def toz3(self):
+        return z3.And(self.left.toz3(), self.right.toz3())
 
 
 class Lesser(Op2):
     op = "<"
     def fun(_, x, y): return x < y
 
+    def toz3(self):
+        return self.left.toz3() < self.right.toz3()
+
 
 class Equals(Op2):
     op = "="
     def fun(_, x, y): return x == y
+
+    def toz3(self):
+        return self.left.toz3() == self.right.toz3()
