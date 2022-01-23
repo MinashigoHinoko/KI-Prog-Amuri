@@ -75,6 +75,7 @@ def printExpr(inp):
 
 def evalExpr(inp, env):
     """
+    The following are examples of uses of these functions:
     >>> env = {'x':1, 'y':2, 'z':3}
     >>> evalExpr("x = y", env)
     False
@@ -97,6 +98,7 @@ def evalExpr(inp, env):
 
 def solve(expr):
     """
+    The following are examples of uses of these functions:
     >>> exprs = ["x + y +z = 10", "x < y", "x < 3", "0 < x"]
     >>> sol = solve(exprs)
     >>> sol
