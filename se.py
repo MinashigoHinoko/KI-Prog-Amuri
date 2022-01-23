@@ -3,31 +3,25 @@
 @Editor: mHiko|Amir
 """
 
-"""
->>> ParseExpr().parse("exp(x) + 2*y")
-[(Plus(Exp(Var('x')), Times(Con(2), Var('y'))), '')]
-"""
-
 import math
 from pcomb import *
 import bool
 import z3
 
 """
-<expr> ::= <term> + <expr> | <term>
-<term> ::= <factor> * <term> | <factor>
-<factor> ::= <expon>
-<expon> ::= exp( <atom> ) | <atom>
-<atom> ::= <con> | <var> | ( <expr> )
+The first task is to implement classes for representing the combined arithmetical and boolean expressions.
+Feel free to reuse code we implemented in the course
+
+<expr> ::= <boolean_expression> | <arithm_expression>
 """
 
 
 class ParseExpr(Parser):
     def __init__(self):
-        self.parser = bool.ParseBExpr() ^ ParseExtrExpr()
+        self.parser = bool.ParseBExpr() ^ ParseArithmExpr()
 
 
-class ParseExtrExpr(Parser):
+class ParseArithmExpr(Parser):
     def __init__(self):
         self.parser = ParsePlus() ^ ParseTerm()
 
@@ -67,7 +61,7 @@ class ParseVar(Parser):
 class ParseParen(Parser):
     def __init__(self):
         self.parser = ParseSymbol('(') >> (lambda _:
-                                           ParseExtrExpr() >> (lambda e:
+                                           ParseArithmExpr() >> (lambda e:
                                                                ParseSymbol(')') >> (lambda _:
                                                                                     Return(e))))
 
@@ -76,7 +70,7 @@ class ParsePlus(Parser):
     def __init__(self):
         self.parser = ParseTerm() >> (lambda t:
                                       ParseSymbol('+') >> (lambda _:
-                                                           ParseExtrExpr() >> (lambda e:
+                                                           ParseArithmExpr() >> (lambda e:
                                                                                Return(Plus(t, e)))))
 
 
@@ -171,7 +165,6 @@ class BinOp(Expr):
         self.right = right
 
     def __str__(self):
-        # f"{self.name}({self.left}, {self.right})" # +
         return f"({self.left} {self.op} {self.right})"
 
     def ev(self, env):
@@ -256,7 +249,7 @@ class Exp(Expr):
         self.arg = arg
 
     def __str__(self):
-        return f"exp({self.arg})"  # f"Exp({self.arg})"
+        return f"exp({self.arg})"
 
     def ev(self, env):
         return math.exp(self.arg.ev(env))

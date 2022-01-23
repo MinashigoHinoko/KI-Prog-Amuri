@@ -10,13 +10,6 @@ import pcomb
 import z3
 
 """
-The first task is to implement classes for representing the combined arithmetical and boolean expressions.
-Feel free to reuse code we implemented in the course
-
-<expr> ::= <boolean_expression> | <arithm_expression>
-"""
-
-"""
 Next, implement parsers for the expressions, using parser combinators.
 
 Implement two functions, one for printing, the other for evaluating the parsed expressions in an environment:

@@ -3,11 +3,10 @@
 @Editor: mHiko|Amir
 """
 """
-<bool> ::= <disj> or <bool> | <disj>
-<disj> ::= <conj> and <disj> | <conj>
-<conj> ::= <var> | ( <bool> )
+The first task is to implement classes for representing the combined arithmetical and boolean expressions.
+Feel free to reuse code we implemented in the course
 
-P or (Q and R or P)
+<expr> ::= <boolean_expression> | <arithm_expression>
 """
 from pcomb import *
 import se
@@ -36,17 +35,17 @@ class ParseEqlLess(Parser):
 
 class ParseEqual(Parser):
     def __init__(self):
-        self.parser = se.ParseExtrExpr() >> (lambda d:
+        self.parser = se.ParseArithmExpr() >> (lambda d:
                                              (ParseSymbol("=") >> (lambda _:
-                                                                   se.ParseExtrExpr() >> (lambda e:
+                                                                   se.ParseArithmExpr() >> (lambda e:
                                                                                           Return(Equals(d, e))))))
 
 
 class ParseLesser(Parser):
     def __init__(self):
-        self.parser = se.ParseExtrExpr() >> (lambda d:
+        self.parser = se.ParseArithmExpr() >> (lambda d:
                                              (ParseSymbol("<") >> (lambda _:
-                                                                   se.ParseExtrExpr() >> (lambda e:
+                                                                   se.ParseArithmExpr() >> (lambda e:
                                                                                           Return(Lesser(d, e))))))
 
 
