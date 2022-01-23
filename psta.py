@@ -127,4 +127,7 @@ evalExpr("x * 2 + 3 < x * (2 + 3)", env)
 evalExpr("y * 2 + 3 < y * (2 + 3)", env)
 exprs = ["x + y +z = 10", "x < y", "x < 3", "0 < x"]
 sol = solve(exprs)
-sol
+print(sol)
+exprs = ["x + y +z = 10", "x < y or z<x", "x < 3 and x=2", "0 < x"]
+sol = solve(exprs)
+print(sol)
