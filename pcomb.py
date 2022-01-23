@@ -1,3 +1,7 @@
+"""
+@author: Cezar Ionescu
+@Editor: mHiko|Amir
+"""
 def result(p): return p[0][0]
 
 
