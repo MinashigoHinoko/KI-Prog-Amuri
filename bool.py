@@ -8,11 +8,13 @@ Feel free to reuse code we implemented in the course
 
 <expr> ::= <boolean_expression> | <arithm_expression>
 """
+
+
+
+
 from pcomb import *
 import se
 import z3
-
-
 class ParseBExpr(Parser):
     def __init__(self):
         self.parser = ParseOr() ^ ParseDisj()
@@ -36,17 +38,17 @@ class ParseEqlLess(Parser):
 class ParseEqual(Parser):
     def __init__(self):
         self.parser = se.ParseArithmExpr() >> (lambda d:
-                                             (ParseSymbol("=") >> (lambda _:
-                                                                   se.ParseArithmExpr() >> (lambda e:
-                                                                                          Return(Equals(d, e))))))
+                                               (ParseSymbol("=") >> (lambda _:
+                                                                     se.ParseArithmExpr() >> (lambda e:
+                                                                                              Return(Equals(d, e))))))
 
 
 class ParseLesser(Parser):
     def __init__(self):
         self.parser = se.ParseArithmExpr() >> (lambda d:
-                                             (ParseSymbol("<") >> (lambda _:
-                                                                   se.ParseArithmExpr() >> (lambda e:
-                                                                                          Return(Lesser(d, e))))))
+                                               (ParseSymbol("<") >> (lambda _:
+                                                                     se.ParseArithmExpr() >> (lambda e:
+                                                                                              Return(Lesser(d, e))))))
 
 
 class ParseBParen(Parser):
@@ -75,17 +77,6 @@ class ParseAnd(Parser):
 
 class BExpr:
     pass
-
-
-class BVar(BExpr):
-    def __init__(self, name):
-        self.name = name
-
-    def __str__(self):
-        return self.name
-
-    def ev(self, env):
-        return env[self.name]
 
 
 class Op2(BExpr):

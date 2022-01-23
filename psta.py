@@ -28,9 +28,9 @@ class Main():
     >>> x < 3         (Now Insert rule/s(type 'end' to stop): )
     >>> 0 < x         (Now Insert rule/s(type 'end' to stop): )
     >>> end           (Now Insert rule/s(type 'end' to stop): )
-    
+
     A Possible Solution is: {'y = 2', 'x = 1', 'z = 7'}
-    
+
     """
 
     def __init__(self):
@@ -112,12 +112,13 @@ def solve(expr):
     elif checker == "unsat":
         print("No Solution!")
 
+
 printExpr("x = y")
 printExpr("x + 2 * y")
 printExpr("x < 2 and y < 1")
 printExpr("(x + 2*y < 15 + x * x) or z = 5")
 printExpr("x + 2*y < 15 + x * x or z = 5")
-env = {'x':1, 'y':2, 'z':3}
+env = {'x': 1, 'y': 2, 'z': 3}
 evalExpr("x = y", env)
 evalExpr("x + 2 * y", env)
 evalExpr("x < 2 and y < 1", env)
@@ -129,5 +130,11 @@ exprs = ["x + y +z = 10", "x < y", "x < 3", "0 < x"]
 sol = solve(exprs)
 print(sol)
 exprs = ["x + y +z = 10", "x < y or z<x", "x < 3 and x=2", "0 < x"]
+sol = solve(exprs)
+print(sol)
+exprs = ["x + y +z*2 = 10", "x < y or z<x", "x < 3 and x=2", "0 < x"]
+sol = solve(exprs)
+print(sol)
+exprs = ["x + y +z = 10", "x < y", "x < 3", "5 < x"]
 sol = solve(exprs)
 print(sol)

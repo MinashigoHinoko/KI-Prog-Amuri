@@ -62,8 +62,8 @@ class ParseParen(Parser):
     def __init__(self):
         self.parser = ParseSymbol('(') >> (lambda _:
                                            ParseArithmExpr() >> (lambda e:
-                                                               ParseSymbol(')') >> (lambda _:
-                                                                                    Return(e))))
+                                                                 ParseSymbol(')') >> (lambda _:
+                                                                                      Return(e))))
 
 
 class ParsePlus(Parser):
@@ -71,7 +71,7 @@ class ParsePlus(Parser):
         self.parser = ParseTerm() >> (lambda t:
                                       ParseSymbol('+') >> (lambda _:
                                                            ParseArithmExpr() >> (lambda e:
-                                                                               Return(Plus(t, e)))))
+                                                                                 Return(Plus(t, e)))))
 
 
 class ParseTimes(Parser):
@@ -90,14 +90,7 @@ class ParseExp(Parser):
 
 
 class Expr:
-    def __add__(self, other):
-        return Plus(self, other)
-
-    def __mul__(self, other):
-        return Times(self, other)
-
-    def diff(self, var):
-        return "Error! diff not implemented"
+    pass
 
 
 class Con(Expr):
@@ -109,20 +102,6 @@ class Con(Expr):
 
     def ev(self, env):
         return self.val
-
-    def diff(self, var):
-        return Con(0)
-
-    def simplify(self):
-        return self
-
-    def __eq__(self, other):
-        if type(other).__name__ != "Con":
-            return False
-        return self.val == other.val
-
-    def vars_(self):
-        return []
 
     def toz3(self):
         return self.val
@@ -137,23 +116,6 @@ class Var(Expr):
 
     def ev(self, env):
         return env[self.name]
-
-    def diff(self, var):
-        if self.name == var:
-            return Con(1)
-        else:
-            return Con(0)
-
-    def simplify(self):
-        return self
-
-    def __eq__(self, other):
-        if type(other).__name__ != "Var":
-            return False
-        return self.name == other.name
-
-    def vars_(self):
-        return [self.name]
 
     def toz3(self):
         return z3.Int(self.name)
@@ -170,42 +132,11 @@ class BinOp(Expr):
     def ev(self, env):
         return self.fun(self.left.ev(env), self.right.ev(env))
 
-    def __eq__(self, other):
-        if not isinstance(other, BinOp):
-            return False
-        return self.name == other.name and self.left == other.left and self.right == other.right
-
-    def vars_(self):
-        return list(set(self.left.vars_() + self.right.vars_()))
-
 
 class Plus(BinOp):
     name = "Plus"
     def fun(_, x, y): return x + y
     op = '+'
-
-    def diff(self, var):
-        return self.left.diff(var) + self.right.diff(var)
-
-    def simplify(self):
-        simple_left = self.left.simplify()
-        simple_right = self.right.simplify()
-
-        vl = None
-        vr = None
-        if simple_left.vars_() == []:
-            vl = simple_left.ev({})
-        if simple_right.vars_() == []:
-            vr = simple_right.ev({})
-
-        if vl != None and vr != None:
-            return Con(vl + vr)
-        if vl == 0:
-            return simple_right
-        elif vr == 0:
-            return simple_left
-        else:
-            return simple_left + simple_right
 
     def toz3(self):
         return self.left.toz3() + self.right.toz3()
@@ -216,66 +147,5 @@ class Times(BinOp):
     def fun(_, x, y): return x * y
     op = '*'
 
-    def diff(self, var):
-        return self.left.diff(var) * self.right + self.left * self.right.diff(var)
-
-    def simplify(self):
-        simple_left = self.left.simplify()
-        simple_right = self.right.simplify()
-        vl = None
-        vr = None
-        if simple_left.vars_() == []:
-            vl = simple_left.ev({})
-        if simple_right.vars_() == []:
-            vr = simple_right.ev({})
-
-        if vl != None and vr != None:
-            return Con(vl * vr)
-        if vl == 0 or vr == 0:
-            return Con(0)
-        elif vl == 1:
-            return simple_right
-        elif vr == 1:
-            return simple_left
-        else:
-            return simple_left * simple_right
-
     def toz3(self):
         return self.left.toz3() * self.right.toz3()
-
-
-class Exp(Expr):
-    def __init__(self, arg):
-        self.arg = arg
-
-    def __str__(self):
-        return f"exp({self.arg})"
-
-    def ev(self, env):
-        return math.exp(self.arg.ev(env))
-
-    def diff(self, var):
-        return Exp(self.arg) * self.arg.diff(var)
-
-    def __eq__(self, other):
-        if not isinstance(other, Exp):
-            return False
-        return self.arg == other.arg
-
-    def simplify(self):
-        simple_arg = self.arg.simplify()
-
-        if simple_arg.vars_() == []:
-            return Con(math.exp(simple_arg.ev({})))
-
-        return Exp(simple_arg)
-
-    def vars_(self):
-        return self.arg.vars_()
-
-
-def diff(string, var):
-    res = ParseExpr().parse(string)
-    if res != []:
-        expr = result(res)
-        return str(expr.diff(var).simplify())
