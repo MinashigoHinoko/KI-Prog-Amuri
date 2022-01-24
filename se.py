@@ -4,7 +4,6 @@
 """
 
 # Neccessary Imports
-import math
 from pcomb import *
 import bool
 import z3
@@ -19,6 +18,7 @@ Feel free to reuse code we implemented in the course
 
 class ParseExpr(Parser):
     def __init__(self):
+        # Adjusted this to be able to work with bool and arithmetic at the same time.
         self.parser = bool.ParseBExpr() ^ ParseArithmExpr()
 
 

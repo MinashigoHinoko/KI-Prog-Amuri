@@ -9,20 +9,20 @@ import se
 import pcomb
 import z3
 
-# This makes the program more useable for everyone, as it has a user friendly input
-
 
 class Main():
     """
-    The following is an example of how to use this class:
-    >>> Main()
-    >>> x + y +z = 10 (Insert problem: )
-    >>> x < y         (Now Insert rule/s(type 'end' to stop): )
-    >>> x < 3         (Now Insert rule/s(type 'end' to stop): )
-    >>> 0 < x         (Now Insert rule/s(type 'end' to stop): )
-    >>> end           (Now Insert rule/s(type 'end' to stop): )
+    This makes the program more useable for everyone, as it has a user friendly input
 
-    A Possible Solution is: {'y = 2', 'x = 1', 'z = 7'}
+    The following is an example of an usage f this class:
+    -------
+        >>> Main()
+        >>> x + y +z = 10 (Insert problem: )
+        >>> x < y         (Now Insert rule/s(type 'end' to stop): )
+        >>> x < 3         (Now Insert rule/s(type 'end' to stop): )
+        >>> 0 < x         (Now Insert rule/s(type 'end' to stop): )
+        >>> end           (Now Insert rule/s(type 'end' to stop): )
+            A Possible Solution is: {'z = 5', 'y = 3', 'x = 2'}
 
     """
 
@@ -40,61 +40,95 @@ class Main():
         print(f"A Possible Solution is: {sol}")
         print("\n")
 
-# This is for checking the print of the Expressions, a print should show the mathematical correct way to write the Expression down
-
 
 def printExpr(inp):
     """
-    The following are examples of uses of these functions:
+    This is for checking the print of an expression, 
+    a print should show the mathematical correct way to write an expression down.
+
+    Parameters
+    ----------
+    inp : String
+        A Mathematical string you want to have formated
+
+    The following are examples of uses of this function
+    -------
     >>> printExpr("x = y")
-    (x = y)
+        (x = y)
     >>> printExpr("x + 2 * y")
-    (x + (2 * y))
+        (x + (2 * y))
     >>> printExpr("x < 2 and y < 1")
-    ((x < 2) and (y < 1))
+        ((x < 2) and (y < 1))
     >>> printExpr("(x + 2*y < 15 + x * x) or z = 5")
-    (((x + (2 * y)) < (15 + (x * x))) or (z = 5))
+        (((x + (2 * y)) < (15 + (x * x))) or (z = 5))
     >>> printExpr("x + 2*y < 15 + x * x or z = 5")
-    (((x + (2 * y)) < (15 + (x * x))) or (z = 5))
+        (((x + (2 * y)) < (15 + (x * x))) or (z = 5))
+
     """
     prnt = se.ParseExpr().parse(inp)
     print(pcomb.result(prnt))
 
-# This is for evaluating the the Expression and the relates variables to it, saved in env. Outputs either if the Expression is bool True or False or gives a result if possible
-
 
 def evalExpr(inp, env):
     """
-    The following are examples of uses of these functions:
+    This is for evaluating an expression and the related variables to it, saved in env. 
+    Outputs if the expression is bool either true or false.
+    It can also output a result if its arithmetic.
+
+    Parameters
+    ----------
+    inp : String
+        A Mathmatical string you want to have evaluated
+    env : dictionary
+        Some given numbers for making a calcualtion possible
+
+    The following is an example of an usage of this function
+    -------
     >>> env = {'x':1, 'y':2, 'z':3}
     >>> evalExpr("x = y", env)
-    False
+        False
     >>> evalExpr("x + 2 * y", env)
-    5
+        5
     >>> evalExpr("x < 2 and y < 1", env)
-    False
+        False
     >>> evalExpr("(x + 2*y < 15 + x * x) or z = 5", env)
-    True
+        True
     >>> evalExpr("x + 2*y < 15 + x * x or z = 5", env)
-    True
+        True
     >>> evalExpr("x * 2 + 3 < x * (2 + 3)", env)
-    False
+        False
     >>> evalExpr("y * 2 + 3 < y * (2 + 3)", env)
-    True
+        True
     """
     evl = se.ParseExpr().parse(inp)
     print(pcomb.result(evl).ev(env))
 
-# This is for the actuall sovling of equations and inequations. z3 is tasked with solving and the ParseExpr is handling the translation into z3. At the end the model gets formated correctly if there is a Solution, if not it outputs "No Solution"
-
 
 def solve(expr):
     """
-    The following are examples of uses of these functions:
+    This is for the actual sovling of equations and inequations.
+    Z3 is tasked with solving and the se.ParseExpr is handling the translation into z3.
+    At the end, if there is a solution, the model gets formated correctly and if not,
+    it outputs "No solution!"
+
+    Parameters
+    ----------
+    expr : array
+        This array is the problem we want to solve and followed by rules the solution has to follow
+            ['Problem','rule','rule','rule',...,..]
+
+    Returns
+    -------
+    models : Int
+        The formated solution to the problem that follows all rules
+
+    The following are examples of uses of these functions
+    -------
     >>> exprs = ["x + y +z = 10", "x < y", "x < 3", "0 < x"]
     >>> sol = solve(exprs)
     >>> sol
-    {'x = 1', 'y = 2', 'z = 7'}
+        {'x = 1', 'y = 2', 'z = 7'}
+
     """
     s = z3.Solver()
     for e in expr:
@@ -108,5 +142,5 @@ def solve(expr):
             val = mdl[helper]
             models.add(f'{var} = {val}')
         return models
-    elif checker == "unsat":
-        print("No Solution!")
+    else:
+        print("No solution!")

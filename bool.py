@@ -2,19 +2,14 @@
 @author: Cezar Ionescu
 @Editor: mHiko|Amir
 """
-"""
-The first task is to implement classes for representing the combined arithmetical and boolean expressions.
-Feel free to reuse code we implemented in the course
-
-<expr> ::= <boolean_expression> | <arithm_expression>
-"""
 
 
-
-#Neccessary Imports
+# Neccessary Imports
 from pcomb import *
 import se
 import z3
+
+
 class ParseBExpr(Parser):
     def __init__(self):
         self.parser = ParseOr() ^ ParseDisj()
@@ -27,6 +22,7 @@ class ParseDisj(Parser):
 
 class ParseConj(Parser):
     def __init__(self):
+        # Adjusted this so the Parser is also be able to work with = and < Symbols
         self.parser = ParseEqlLess() ^ ParseLesser()
 
 
