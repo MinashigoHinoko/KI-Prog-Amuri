@@ -2,9 +2,9 @@
 """
 Created on Fri Jan 21 15:56:10 2022
 
-@author: mHiko|Amir
+@author: mHiko
 """
-# Neccessary Imports
+# Neccessary imports
 import se
 import pcomb
 import z3

@@ -1,6 +1,6 @@
 """
 @author: Cezar Ionescu
-@Editor: mHiko|Amir
+@Editor: mHiko
 """
 def result(p): return p[0][0]
 

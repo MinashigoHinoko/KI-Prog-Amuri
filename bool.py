@@ -1,10 +1,10 @@
 """
 @author: Cezar Ionescu
-@Editor: mHiko|Amir
+@Editor: mHiko
 """
 
 
-# Neccessary Imports
+# Neccessary imports
 from pcomb import *
 import se
 import z3
@@ -22,7 +22,7 @@ class ParseDisj(Parser):
 
 class ParseConj(Parser):
     def __init__(self):
-        # Adjusted this so the Parser is also be able to work with = and < Symbols
+        # Adjustments so the Parser is also able to work with = and < Symbols
         self.parser = ParseEqlLess() ^ ParseLesser()
 
 
