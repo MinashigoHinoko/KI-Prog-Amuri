@@ -3,7 +3,7 @@
 @Editor: mHiko|Amir
 """
 
-#Neccessary Imports
+# Neccessary Imports
 import math
 from pcomb import *
 import bool

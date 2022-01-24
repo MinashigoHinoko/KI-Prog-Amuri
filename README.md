@@ -15,3 +15,7 @@ One way this can be tested is written inside the solve function as a comment.
 
 As requested by the Task, I have also implemented printExpr and evalExpr, one prints the Expression you type in in a mathematical correct format and the other evaluates if the problem has a Solution with the given Variables.
 One way this can be tested is written inside the solve function as a comment.
+
+
+PLEASE NOTE:	This program is only usable if you have installed the z3, z3-Solver package and every file in the zip can be found in the same folder.
+				The main code is written down in psta.py the other files are for assisting and formatting the code(aka are "just" libraries I adjusted)

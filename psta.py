@@ -4,12 +4,14 @@ Created on Fri Jan 21 15:56:10 2022
 
 @author: mHiko|Amir
 """
-#Neccessary Imports
+# Neccessary Imports
 import se
 import pcomb
 import z3
 
-#This makes the program more useable for everyone, as it has a user friendly input
+# This makes the program more useable for everyone, as it has a user friendly input
+
+
 class Main():
     """
     The following is an example of how to use this class:
@@ -38,7 +40,9 @@ class Main():
         print(f"A Possible Solution is: {sol}")
         print("\n")
 
-#This is for checking the print of the Expressions, a print should show the mathematical correct way to write the Expression down
+# This is for checking the print of the Expressions, a print should show the mathematical correct way to write the Expression down
+
+
 def printExpr(inp):
     """
     The following are examples of uses of these functions:
@@ -56,7 +60,9 @@ def printExpr(inp):
     prnt = se.ParseExpr().parse(inp)
     print(pcomb.result(prnt))
 
-#This is for evaluating the the Expression and the relates variables to it, saved in env. Outputs either if the Expression is bool True or False or gives a result if possible 
+# This is for evaluating the the Expression and the relates variables to it, saved in env. Outputs either if the Expression is bool True or False or gives a result if possible
+
+
 def evalExpr(inp, env):
     """
     The following are examples of uses of these functions:
@@ -79,8 +85,9 @@ def evalExpr(inp, env):
     evl = se.ParseExpr().parse(inp)
     print(pcomb.result(evl).ev(env))
 
-#This is for the actuall sovling of equations and inequations. z3 is tasked with solving and the ParseExpr is handling the translation into z3.
-#At the end the model gets formated correctly if there is a Solution, if not it outputs "No Solution"
+# This is for the actuall sovling of equations and inequations. z3 is tasked with solving and the ParseExpr is handling the translation into z3. At the end the model gets formated correctly if there is a Solution, if not it outputs "No Solution"
+
+
 def solve(expr):
     """
     The following are examples of uses of these functions:
