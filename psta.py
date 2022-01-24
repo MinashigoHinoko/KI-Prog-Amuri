@@ -12,9 +12,9 @@ import z3
 
 class Main():
     """
-    This makes the program more useable for everyone, as it has a user friendly input
+    This class makes the program more useable for everyone, as it has a user friendly input.
 
-    The following is an example of an usage f this class:
+    Below is an example of how to use this class:
     -------
         >>> Main()
         >>> x + y +z = 10 (Insert problem: )
@@ -43,15 +43,15 @@ class Main():
 
 def printExpr(inp):
     """
-    This is for checking the print of an expression, 
-    a print should show the mathematical correct way to write an expression down.
+    This function is for checking the print of an expression. 
+    A print should show the mathematically correct way to write an expression down.
 
     Parameters
     ----------
     inp : String
-        A Mathematical string you want to have formated
+        A mathematical string you want to have formated.
 
-    The following are examples of uses of this function
+    Below is an example of how to use this function:
     -------
     >>> printExpr("x = y")
         (x = y)
@@ -71,18 +71,18 @@ def printExpr(inp):
 
 def evalExpr(inp, env):
     """
-    This is for evaluating an expression and the related variables to it, saved in env. 
-    Outputs if the expression is bool either true or false.
-    It can also output a result if its arithmetic.
+    This function is for evaluating an expression and the related variables to it, saved in env. 
+    It gives an output (true or false) if the expression is bool.
+    It can also output a result if it is arithmetic.
 
     Parameters
     ----------
     inp : String
-        A Mathmatical string you want to have evaluated
+        A mathmatical string you want to have evaluated.
     env : dictionary
-        Some given numbers for making a calcualtion possible
+        Some given numbers to make a calculation possible.
 
-    The following is an example of an usage of this function
+    Below is an example of how to use this function:
     -------
     >>> env = {'x':1, 'y':2, 'z':3}
     >>> evalExpr("x = y", env)
@@ -106,23 +106,23 @@ def evalExpr(inp, env):
 
 def solve(expr):
     """
-    This is for the actual sovling of equations and inequations.
+    This function is for the actual solving of equations and inequations.
     Z3 is tasked with solving and the se.ParseExpr is handling the translation into z3.
-    At the end, if there is a solution, the model gets formated correctly and if not,
-    it outputs "No solution!"
+    If there is a solution, the model gets formated correctly and if not,
+    it outputs "No solution!" at the end.
 
     Parameters
     ----------
     expr : array
-        This array is the problem we want to solve and followed by rules the solution has to follow
-            ['Problem','rule','rule','rule',...,..]
+        This array is the problem we want to solve and is followed by rules the solution has to follow.
+            ['Problem','rule','rule','rule',..., and so on]
 
     Returns
     -------
     models : Int
-        The formated solution to the problem that follows all rules
+        The formated solution to the problem, which follows all rules.
 
-    The following are examples of uses of these functions
+    Below is an example of how to use this function:
     -------
     >>> exprs = ["x + y +z = 10", "x < y", "x < 3", "0 < x"]
     >>> sol = solve(exprs)
